@@ -1,0 +1,14 @@
+1. Define regions
+
+Rudy (tested on version ??)
+
+2. Calculate credible SNPs
+
+R (tested on version ??)
+
+R packages:
+	dplyr
+	coloc
+	readr
+	stringr
+	optparse
