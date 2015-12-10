@@ -1,0 +1,4 @@
+Development notes
+
+1. Define regions
+	- currently subsets GWAS summary stats. This could be moved so this script solely defines the recombination region.
