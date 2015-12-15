@@ -5,7 +5,7 @@ library(tidyr)
 library(stringr)
 library(optparse)
 
-source('credible_snps_functions.R')
+source('scripts/credible_snps_functions.R')
 
 option_list = list(
 	make_option(c("-r", "--regions"), type="character", default=NULL,
@@ -28,7 +28,7 @@ regions <- read_delim(opt$regions, delim = "\t", col_names = c('index','locus'))
 data <- read_delim(opt$stats, delim = "\t")
 
 # calculate ABF
-data$BF <- -abf(p=data$PVAL, maf=data$MAF, n0=opt$affected, n1=opt$unaffected)
+data$BF <- -abf(p=data$PVAL, maf=data$A1_UNAFF, n0=opt$affected, n1=opt$unaffected)
 
 # define credible SNP sets
 
@@ -42,7 +42,7 @@ for(i in seq_along(cred99)) {
         sm <- dosumm2(psub)
 	cred95[[i]] <- psub[1:sm$n95, c("SNPID","CHROM","POS","MAF","PVAL","indexSNP","pp","cpp")]
         cred99[[i]] <- psub[1:sm$n99, c("SNPID","CHROM","POS","MAF","PVAL","indexSNP","pp","cpp")]
-        summ[[i]] <- dosumm2(psub)
+        summ[[i]] <- sm
 
 }
 

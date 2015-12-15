@@ -1,7 +1,8 @@
 Development notes
 1. General
 	- define test data
-	- define file header
+	- define file header or strict order
+	- are alleles important?
 
 2. Define regions
 	- currently subsets GWAS summary stats. This could be moved so this script solely defines the recombination region.

@@ -87,6 +87,6 @@ else
 end
 
 # get SNPs withing extended regions
-retr_region_snps(path_bound_red,num_cols,sInputPvals)
+#retr_region_snps(path_bound_red,num_cols,sInputPvals)
 
 

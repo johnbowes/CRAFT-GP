@@ -32,7 +32,7 @@ rs78519860  6	  128145388 T   C   0.07869   0.9007
 ### Run
 
 ```
-$ ruby scripts/regions_main.rb -i input/test_index_snps.txt -p input/test_summary_stats.txt -m 0.1
+$ ruby scripts/define_regions_main.rb -i input/test_index_snps.txt -p input/test_summary_statistics.txt -m 0.1
 
 -i input (for the index SNPs)
 -p pvalues (for the pvalues of the SNPs)
@@ -47,3 +47,6 @@ $ ruby scripts/regions_main.rb -i input/test_index_snps.txt -p input/test_summar
 2.
 
 ## Calculate credible SNP sets
+
+Rscript credible_snps_main.R 
+

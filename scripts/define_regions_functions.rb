@@ -271,7 +271,7 @@ def write_output(output_data,cmoutput)
      		upper = pos + $bp
      		if keys_snp.size != 3 #or keys_snp.size!
          	 	puts 'Check if file with SNPs is tab-delimited and contains 3 columns'
-         		abort
+         i		abort
       		end
       		rb_file.write(snp + t +"chr"+chr+":"+lower.to_s+"-"+upper.to_s + "\n")
       	end	
@@ -285,8 +285,10 @@ def retr_region_snps(path,num_cols,sInputPvals)
     file_pvalues = read_file(sInputPvals,false)
 
     file.each_with_index do |line,i|
+	puts i
         keys = line.split("\t")
         indexSNP = keys[0]
+	puts indexSNP
         reg = keys[1].strip
         patt_reg_snps = 'output/regions/pri_reg_' + i.to_s + '.txt'
         dirname = File.dirname(patt_reg_snps)
@@ -305,7 +307,13 @@ def retr_region_snps(path,num_cols,sInputPvals)
             chromosome = parts[0]
             start = parts[1].split("\-")[0]
             ende = parts[1].split("\-")[1]
+	   
+	    puts indexSNP 
+	    puts chromosome
+	    puts start
+	    puts ende 
 
+	
             # go through all lines of the file that contains the pvalue and MAF of all SNPS
             file_pvalues.each_with_index do |line_pvlaue,j|
                 tokens = line_pvlaue.split("\t")
@@ -354,7 +362,7 @@ def retr_region_snps(path,num_cols,sInputPvals)
     system befehl
     befehl = 'cat output/regions/pri_reg*.txt > output/regions/regional_snps.txt'
     system befehl
-    befehl = 'rm -f output/regions/pri_reg*.txt'
-    system befehl
+    #befehl = 'rm -f output/regions/pri_reg*.txt'
+    #system befehl
 
 end
