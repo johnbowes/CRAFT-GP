@@ -81,9 +81,9 @@ puts "Number of columns in input file :" + num_cols.to_s
 write_output(output_data,cm_output)
 
 if $bp==0
-  path_bound_red = "output/regions/red_boundaries_"+ $cM.to_s.gsub(".","") + "cm.txt"
+  path_bound_red = "output/regions/region_boundaries_"+ $cM.to_s.gsub(".","") + "cm.txt"
 else
-  path_bound_red = "output/regions/red_boundaries_"+ $bp.to_s + "bp.txt"
+  path_bound_red = "output/regions/region_boundaries_"+ $bp.to_s + "bp.txt"
 end
 
 # get SNPs withing extended regions

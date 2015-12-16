@@ -48,5 +48,9 @@ $ ruby scripts/define_regions_main.rb -i input/test_index_snps.txt -p input/test
 
 ## Calculate credible SNP sets
 
-Rscript credible_snps_main.R 
+### subset GWAS data
+python scripts/filter_summary_stats.py --regions output/regions/region_boundaries_01cm.txt --stats input/test_summary_stats.txt --out output/credible_snps/test_summary_stats_subset.txt
+
+### calculate credible SNP
+Rscript scripts/credible_snps_main.R -r output/regions/region_boundaries_01cm.txt -a 1962 -u 8923 -s output/credible_snps/test_summary_stats_subset.txt
 

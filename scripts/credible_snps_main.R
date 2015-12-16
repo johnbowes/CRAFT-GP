@@ -6,6 +6,7 @@ library(stringr)
 library(optparse)
 
 source('scripts/credible_snps_functions.R')
+source('scripts/abf_corrected.R')
 
 option_list = list(
 	make_option(c("-r", "--regions"), type="character", default=NULL,
@@ -25,7 +26,7 @@ regions <- read_delim(opt$regions, delim = "\t", col_names = c('index','locus'))
 	separate(locus, sep = "[:-]", c('chr','start','end'))
 
 # read summary statistics
-data <- read_delim(opt$stats, delim = "\t")
+data <- read_delim(opt$stats, delim = " ")
 
 # calculate ABF
 data$BF <- -abf(p=data$PVAL, maf=data$A1_UNAFF, n0=opt$affected, n1=opt$unaffected)
@@ -37,11 +38,11 @@ cred99 <- cred95 <- summ  <- vector("list",nrow(regions))
 for(i in seq_along(cred99)) {
 
         current_index <- as.character(regions[i,1])
-        psub <- pproc(subset(data,indexSNP==current_index), current_index)
+        psub <- pproc(subset(data,index_snp==current_index), current_index)
 
-        sm <- dosumm2(psub)
-	cred95[[i]] <- psub[1:sm$n95, c("SNPID","CHROM","POS","MAF","PVAL","indexSNP","pp","cpp")]
-        cred99[[i]] <- psub[1:sm$n99, c("SNPID","CHROM","POS","MAF","PVAL","indexSNP","pp","cpp")]
+        sm <- dosumm(psub)
+	cred95[[i]] <- psub[1:sm$n95, c("SNPID","CHROM","POS","A1_UNAFF","PVAL","index_snp","pp","cpp")]
+        cred99[[i]] <- psub[1:sm$n99, c("SNPID","CHROM","POS","A1_UNAFF","PVAL","index_snp","pp","cpp")]
         summ[[i]] <- sm
 
 }

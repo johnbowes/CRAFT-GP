@@ -197,7 +197,7 @@ def write_output(output_data,cmoutput)
 		# path_bound_red = "outputs/red_boundaries_"+ $cM.to_s + "cm.txt"
 		path = "output/regions/supplementary/regions_"+ cM_m + "cm.txt"
 		path_bound = "output/regions/supplementary/boundaries_"+ cM_m + "cm.txt"
-		path_bound_red = "output/regions/red_boundaries_"+ cM_m + "cm.txt"
+		path_bound_red = "output/regions/region_boundaries_"+ cM_m + "cm.txt"
 		dirs = [path,path_bound,path_bound_red]
 		dirs.each do |dir|
 			dirname = File.dirname(dir)
