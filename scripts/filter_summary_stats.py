@@ -42,7 +42,7 @@ def main():
 
 	for index, row in regions.iterrows():
 		
-		subset = stats[np.logical_and(stats['CHROM'] == 1,
+		subset = stats[np.logical_and(stats['CHROM'] == row['chr'],
 			np.logical_and(stats['POS'] >= row['start'], stats['POS'] <= row['end']))]
 		subset.is_copy = False
 		subset['index_snp'] = row['index_snp']
