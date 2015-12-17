@@ -64,20 +64,25 @@ cred95.long <- do.call("rbind",cred95)
 write_delim(cred99.long, delim = " ", "output/credible_snps/credible_snps.txt")
 
 # create data for bed file tracks
-cred95_region <- summary %>% dplyr::select(chr, cred95.start, cred95.end, index)
-cred99_region <- summary %>% dplyr::select(chr, cred99.start, cred99.end, index)
+cred95_region <- summary %>%
+        dplyr::select(chr, cred95.start, cred95.end, index) %>%
+        mutate(chr = paste('chr',chr,sep=''))
+
+cred99_region <- summary %>%
+        dplyr::select(chr, cred99.start, cred99.end, index) %>%
+        mutate(chr = paste('chr',chr,sep=''))
 
 cred95_snps <- cred95.long %>%
-	mutate(start = POS - 1) %>%
-	mutate(chr = as.integer(str_replace(CHROM, 'chr', ''))) %>%
-	arrange(chr, start) %>%
-	dplyr::select(CHROM, start, POS, SNPID)
+        mutate(start = POS - 1) %>%
+        mutate(chr = paste('chr',CHROM,sep='')) %>%
+        arrange(CHROM, start) %>%
+        dplyr::select(chr, start, POS, SNPID)
 
 cred99_snps <- cred99.long %>%
         mutate(start = POS - 1) %>%
-        mutate(chr = as.integer(str_replace(CHROM, 'chr', ''))) %>%
-        arrange(chr, start) %>%
-        dplyr::select(CHROM, start, POS, SNPID)
+        mutate(chr = paste('chr',CHROM,sep='')) %>%
+        arrange(CHROM, start) %>%
+        dplyr::select(chr, start, POS, SNPID)
 
 # create bed file
 bed_file <- "output/credible_snps/credible_snps.bed"
@@ -87,5 +92,5 @@ cat("track name=\"cred95\" description=\"Cred95 interval\" visibility=1", file =
 write_delim(cred95_region, bed_file, delim = " ", append = TRUE)
 cat("track name=\"cred99SNPs\" description=\"Cred99 SNPs\" visibility=1", file = bed_file, sep = "\n", append = TRUE)
 write_delim(cred99_snps, bed_file, delim = " ", col_names = FALSE, append = TRUE)
-cat("track name=\"cred95SNPs\" description=\"Cred99 SNPs\"  visibility=1", file = bed_file, sep = "\n", append = TRUE)
-write_delim(cred99_snps, bed_file, delim = " ", col_names = FALSE, append = TRUE)
+cat("track name=\"cred95SNPs\" description=\"Cred95 SNPs\"  visibility=1", file = bed_file, sep = "\n", append = TRUE)
+write_delim(cred95_snps, bed_file, delim = " ", col_names = FALSE, append = TRUE)
