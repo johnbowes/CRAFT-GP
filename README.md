@@ -4,10 +4,13 @@ It is widely accepted that the most strongly associated SNP at any particular ri
 This pipeline will apply a Bayesian refinement method to all risk loci that has been previously demonstrated to be more efficient at selecting putatively functional SNPs compared to linkage disequilibrium (LD) based approaches [2,3]. For each index SNP a genomic interval will be defined where the upstream and downstream boundaries are determined by a genetic distance of 0.1 centimorgans (cM) from the index SNP using HapMap fine-scale recombination rate estimates. For each of these intervals the posterior probability that any particular SNP is the casual SNP based on the Bayes factor for the SNP as a proportion of the mean Bayes factor for all SNPs in the genomic interval will be calculated. Posterior probabilities will be aggregated to define the smallest set of SNPs with a total posterior probability of ≥ 99% [2]. The credible SNP sets can be further refined with the integration of functional genomic annotations derived from disease-relevant tissue and cell types such as those described below [3].
 
 [1] 	Farh KK-H, Marson A, Zhu J, et al. Genetic and epigenetic fine mapping of causal autoimmune disease variants. Nature Published Online First: 29 October 2014.http://www.ncbi.nlm.nih.gov/pubmed/25363779 (accessed 29 Oct2014).
+
 [2] 	Maller JB, McVean G, Byrnes J, et al. Bayesian refinement of association signals for 14 loci in 3 common diseases. Nat Genet 2012;44:1294301. doi:10.1038/ng.2435
+
 [3] 	Onengut-Gumuscu S, Chen W-M, Burren O, et al. Fine mapping of type 1 diabetes susceptibility loci and evidence for colocalization of causal variants with lymphoid gene enhancers. Nat Genet Published Online First: 2015. doi:10.1038/ng.3245
 
 The pipeline consists of four stages:
+
 1. define the region around each index SNP
 
 2. calculate creadible SNPs within each interval
