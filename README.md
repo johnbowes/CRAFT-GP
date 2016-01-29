@@ -51,10 +51,9 @@ rs78519860  6	  128145388 T   C   0.07869   0.9007
 ### Run
 
 ```
-$ ruby scripts/define_regions_main.rb -i input/test_index_snps.txt -p input/test_summary_statistics.txt -m 0.1
+$ ruby scripts/define_regions_main.rb -i input/test_index_snps.txt -m 0.1
 
 -i input (for the index SNPs)
--p pvalues (for the pvalues of the SNPs)
 -m cM (normally 0.1(default) or 0.2)
 -r bp region (normally 50kb)
 
