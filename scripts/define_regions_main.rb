@@ -22,10 +22,6 @@ OptionParser.new do |opts|
     input = v
   end
 
-  opts.on('-p [ARG]', '--input_i [ARG]', "Specify the input for pvalues") do |v|
-    sInputPvals = v
-  end
-
   opts.on('-m [ARG]', '--cmregion_n [ARG]', "Specify the cM region m") do |v|
     $cM = v.to_f
   end
@@ -44,14 +40,13 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-if (input == "") or (sInputPvals == "")  #or keys_snp.size! 
+if (input == "")  #or keys_snp.size! 
   puts 'Error please check arguemnts of the input files'
   abort
 end
 
 if $bp!=0 then $cM=0 end
 puts "input: " + input
-puts "input pvalues:" + sInputPvals
 puts "cM: " + $cM.to_s
 puts "bp region: " + $bp.to_s
 
@@ -85,8 +80,3 @@ if $bp==0
 else
   path_bound_red = "output/regions/region_boundaries_"+ $bp.to_s + "bp.txt"
 end
-
-# get SNPs withing extended regions
-#retr_region_snps(path_bound_red,num_cols,sInputPvals)
-
-
