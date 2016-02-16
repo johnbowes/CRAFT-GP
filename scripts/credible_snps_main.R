@@ -6,7 +6,7 @@ library(stringr)
 library(optparse)
 
 source('scripts/credible_snps_functions.R')
-source('scripts/abf_corrected.R')
+source('scripts/abf.R')
 
 option_list = list(
 	make_option(c("-r", "--regions"), type="character", default=NULL,
@@ -16,7 +16,9 @@ option_list = list(
 	make_option(c("-u", "--unaffected"), type="integer", default=NULL,
                 help="Number of controls"),
 	make_option(c("-s", "--stats"), type="character", default=NULL,
-		help="Summary statistics file")
+		help="Summary statistics file"),
+	make_option(c("-c", "--cpp"), type="double", default=0.99,
+                help="Cumulative posterior probability")
 ) 
 
 opt <- parse_args(OptionParser(option_list=option_list))
@@ -33,64 +35,61 @@ data$BF <- -abf(p=data$PVAL, maf=data$A1_UNAFF, n0=opt$affected, n1=opt$unaffect
 
 # define credible SNP sets
 
-cred99 <- cred95 <- summ  <- vector("list",nrow(regions))
+cred <- summ  <- vector("list",nrow(regions))
 
-for(i in seq_along(cred99)) {
+for(i in seq_along(cred)) {
 
         current_index <- as.character(regions[i,1])
-        psub <- pproc(subset(data,index_snp==current_index), current_index)
 
-        sm <- dosumm(psub)
-	cred95[[i]] <- psub[1:sm$n95, c("SNPID","CHROM","POS","A1_UNAFF","PVAL","index_snp","pp","cpp")]
-        cred99[[i]] <- psub[1:sm$n99, c("SNPID","CHROM","POS","A1_UNAFF","PVAL","index_snp","pp","cpp")]
-        summ[[i]] <- sm
+	subset <- data %>%
+			filter(index_snp==current_index) %>%
+			mutate(index=SNPID==current_index) %>%
+			mutate(pp=exp(BF - coloc:::logsum(BF))) %>%
+			arrange(desc(pp)) %>%
+			mutate(cpp=cumsum(pp))
+
+	cred[[i]] <- subset %>%
+			slice(1:which.max(cpp >= opt$cpp)) %>%
+			dplyr::select(-BF, -index)
+
+	# create summary information
+	index <- current_index
+	chr <- unique(subset$CHROM)
+	region_n <- nrow(subset)
+	region_length <- diff(range(subset$POS))
+	cred_n <- nrow(cred[[i]])
+	cred_length <- diff(range(cred[[i]]$POS))
+	cred_start <- min(cred[[i]]$POS)
+	cred_end <-max(cred[[i]]$POS) 
+
+	summ[[i]] <- data.frame(index,chr,region_n,region_length,cred_n, cred_length,cred_start,cred_end, stringsAsFactors=FALSE)
 
 }
 
 # create summary table
-summary <- rbind_all(summ) %>%
-	mutate(cred95.start = sapply(cred95,function(x) min(x$POS))) %>%
-	mutate(cred95.end = sapply(cred95,function(x) max(x$POS))) %>%
-	mutate(cred99.start = sapply(cred99,function(x) min(x$POS))) %>%
-	mutate(cred99.end = sapply(cred99,function(x) max(x$POS))) %>%
-	mutate(cred95.interval = cred95.end - cred95.start) %>%
-	mutate(cred99.interval = cred99.end - cred99.start)
-
-write_delim(summary, delim = " ", "output/credible_snps/summary_table.txt")
+summary_table <- rbind_all(summ)
+summary_file <- paste("output/credible_snps/summary_table_",opt$cpp,".txt",sep="")
+write_delim(summary_table, delim = " ", summary_file)
 
 # create credible snp table
-cred99.long <- do.call("rbind",cred99)
-cred95.long <- do.call("rbind",cred95)
-write_delim(cred99.long, delim = " ", "output/credible_snps/credible_snps.txt")
+credible_snps <- do.call("rbind",cred)
+credible_file <- paste("output/credible_snps/credible_snps_",opt$cpp,".txt",sep="")
+write_delim(credible_snps, delim = " ", credible_file)
 
 # create data for bed file tracks
-cred95_region <- summary %>%
-        dplyr::select(chr, cred95.start, cred95.end, index) %>%
+cred_region <- summary_table %>%
+        dplyr::select(chr, cred_start, cred_end, index) %>%
         mutate(chr = paste('chr',chr,sep=''))
 
-cred99_region <- summary %>%
-        dplyr::select(chr, cred99.start, cred99.end, index) %>%
-        mutate(chr = paste('chr',chr,sep=''))
-
-cred95_snps <- cred95.long %>%
-        mutate(start = POS - 1) %>%
-        mutate(chr = paste('chr',CHROM,sep='')) %>%
-        arrange(CHROM, start) %>%
-        dplyr::select(chr, start, POS, SNPID)
-
-cred99_snps <- cred99.long %>%
+cred_snps <- credible_snps %>%
         mutate(start = POS - 1) %>%
         mutate(chr = paste('chr',CHROM,sep='')) %>%
         arrange(CHROM, start) %>%
         dplyr::select(chr, start, POS, SNPID)
 
 # create bed file
-bed_file <- "output/credible_snps/credible_snps.bed"
-cat("track name=\"cred99\" description=\"Cred99 interval\" visibility=1", file = bed_file, sep = "\n")
-write_delim(cred99_region, bed_file, delim = " ", col_names = FALSE, append = TRUE)
-cat("track name=\"cred95\" description=\"Cred95 interval\" visibility=1", file = bed_file, sep = "\n", append = TRUE)
-write_delim(cred95_region, bed_file, delim = " ", append = TRUE)
-cat("track name=\"cred99SNPs\" description=\"Cred99 SNPs\" visibility=1", file = bed_file, sep = "\n", append = TRUE)
-write_delim(cred99_snps, bed_file, delim = " ", col_names = FALSE, append = TRUE)
-cat("track name=\"cred95SNPs\" description=\"Cred95 SNPs\"  visibility=1", file = bed_file, sep = "\n", append = TRUE)
-write_delim(cred95_snps, bed_file, delim = " ", col_names = FALSE, append = TRUE)
+bed_file <- paste("output/credible_snps/credible_snps_",opt$cpp,".bed",sep="")
+cat("track name=\"cred\" description=\"Cred interval\" visibility=1", file = bed_file, sep = "\n")
+write_delim(cred_region, bed_file, delim = " ", col_names = FALSE, append = TRUE)
+cat("track name=\"credSNPs\" description=\"Cred SNPs\" visibility=1", file = bed_file, sep = "\n", append = TRUE)
+write_delim(cred_snps, bed_file, delim = " ", col_names = FALSE, append = TRUE)
