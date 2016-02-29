@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 require 'optparse'
 require_relative 'define_regions_functions'
 require 'fileutils'
