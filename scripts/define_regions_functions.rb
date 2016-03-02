@@ -109,7 +109,9 @@ def calculation(cont_snps)
   cont_chr = ""
   #rates_path = "/Users/katja/Desktop/Manchester/Detection/Bayesian/recombination_rates/genetic_map_HapMapII_GRCh37/genetic_map_GRCh37_chr"
   # HapMap recombination rates
-  rates_path = "source_data/genetic_map_HapMapII_GRCh37/genetic_map_GRCh37_chr"
+  # Get full path to the HapMap data file
+  rates_path = File.join(File.expand_path(File.dirname(__FILE__)),
+                         "../source_data/genetic_map_HapMapII_GRCh37/genetic_map_GRCh37_chr")
   output_data = []
   not_in_range_snps = []
   num_cols = 0
