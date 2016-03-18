@@ -1,6 +1,6 @@
 1. Define regions
 
-Rudy (tested on version ??)
+Ruby (tested on version ??)
 
 2. Calculate credible SNPs
 
@@ -10,5 +10,11 @@ R packages:
 	dplyr
 	coloc
 	readr
+	tidyr
 	stringr
 	optparse
+
+Python
+
+Python packages:
+	pandas
