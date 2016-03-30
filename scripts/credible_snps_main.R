@@ -5,7 +5,6 @@ library(tidyr)
 library(stringr)
 library(optparse)
 
-source('scripts/credible_snps_functions.R')
 source('scripts/abf.R')
 
 option_list = list(
