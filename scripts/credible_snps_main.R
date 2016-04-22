@@ -5,7 +5,16 @@ library(tidyr)
 library(stringr)
 library(optparse)
 
-source('scripts/abf.R')
+# Locate abf.R regardless of where this script was run from
+# See http://stackoverflow.com/a/6461822
+source_local <- function(fname){
+
+    argv <- commandArgs(trailingOnly = FALSE)
+    base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+    source(paste(base_dir, fname, sep="/"))
+
+}
+source_local('abf.R')
 
 option_list = list(
 	make_option(c("-r", "--regions"), type="character", default=NULL,
