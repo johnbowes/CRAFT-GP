@@ -74,6 +74,15 @@ for(i in seq_along(cred)) {
 
 }
 
+# PJB need to create output dir if not present
+output_dir <- "output/credible_snps/"
+if (!file.exists(output_dir)) {
+
+        print(paste("Creating output dir:",output_dir))
+        dir.create(output_dir)
+
+}
+
 # create summary table
 summary_table <- rbind_all(summ)
 summary_file <- paste("output/credible_snps/summary_table_",opt$cpp,".txt",sep="")
