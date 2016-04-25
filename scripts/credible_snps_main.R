@@ -5,7 +5,16 @@ library(tidyr)
 library(stringr)
 library(optparse)
 
-source('scripts/abf.R')
+# Locate abf.R regardless of where this script was run from
+# See http://stackoverflow.com/a/6461822
+source_local <- function(fname){
+
+    argv <- commandArgs(trailingOnly = FALSE)
+    base_dir <- dirname(substring(argv[grep("--file=", argv)], 8))
+    source(paste(base_dir, fname, sep="/"))
+
+}
+source_local('abf.R')
 
 option_list = list(
 	make_option(c("-r", "--regions"), type="character", default=NULL,
@@ -62,6 +71,15 @@ for(i in seq_along(cred)) {
 	cred_end <-max(cred[[i]]$POS) 
 
 	summ[[i]] <- data.frame(index,chr,region_n,region_length,cred_n, cred_length,cred_start,cred_end, stringsAsFactors=FALSE)
+
+}
+
+# PJB need to create output dir if not present
+output_dir <- "output/credible_snps/"
+if (!file.exists(output_dir)) {
+
+        print(paste("Creating output dir:",output_dir))
+        dir.create(output_dir)
 
 }
 
