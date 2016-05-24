@@ -86,11 +86,11 @@ Annotation of credible SNPs is performed using the ensembl Variant Effect Predic
 
 ### Requirements
 
-Software:
-Variants Effect Predictor (VEP) version 84
-Perl (tested on version 5.20.2)
-Python (tested on anaconda 2.30)
-Tabix (tested on version 0.2.6)
+Software: 
+Variants Effect Predictor (VEP) version 84 
+Perl (tested on version 5.20.2) 
+Python (tested on anaconda 2.30) 
+Tabix (tested on version 0.2.6) 
 
 Python packages:
     PyVCF (tested on version 0.6.8)
@@ -127,7 +127,7 @@ The current procedure uses VEP with a cache, however it requires access to the e
 module load apps/binapps/ensembl-api/84
 ```
 
-Get the cache (not included due to size)
+Get the GRCh38 core cache (not included due to size)
 ```
 cd source_data/ensembl/cache/
 wget ftp://ftp.ensembl.org/pub/release-84/variation/VEP/homo_sapiens_vep_84_GRCh38.tar.gz
