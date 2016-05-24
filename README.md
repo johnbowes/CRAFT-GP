@@ -79,3 +79,62 @@ Rscript scripts/credible_snps_main.R -r output/regions/region_boundaries_01cm.tx
 -u number of unaffected samples
 -s GWAS summary statistics
 ```
+
+## Annotation
+
+Annotation of credible SNPs is performed using the ensembl Variant Effect Predictor (VEP) with custom annotations based on Epigenomics Roadmap.
+
+### Requirements
+
+Software:
+Variants Effect Predictor (VEP) version 84
+Perl (tested on version 5.20.2)
+Python (tested on anaconda 2.30)
+Tabix (tested on version 0.2.6)
+
+Python packages:
+    PyVCF (tested on version 0.6.8)
+    pandas
+    numpy
+    argparse
+
+Data:
+Ensembl cache homo_sapiens_vep_84_GRCh37
+Roadmap Epigenomics (EDACC Release 9) - processed version supplied (not in github)
+
+Scripts:
+process_roadmap.sh - preprocessing script for roadmap data. Sorts and indexes bed files. NOT part of the pipeline.
+annotation.py - annotation script for pipeline.
+
+### Input
+List of credible SNP rs IDs generated in previous stage:
+    output/credible_snps/credible_snp_list_0.99.txt
+
+### Output
+VEP VCF output with custom annotations:
+    output/annotation/annotation.vcf
+
+VEP webapge annotation summary:
+    output/annotation/annotation.vcf_summary.html
+
+Tabulate version of VEP VCF
+    output/annotation/annotation.csv
+
+### VEP set-up
+
+The current procedure uses VEP with a cache, however it requires access to the ensembl remote database for input using a set or rs IDs. This could be changed to a completely offline mode if unworkable with DPSF (i.e. use vcf input). VEP on iCSF is loaded via a module:
+```
+module load apps/binapps/ensembl-api/84
+```
+
+Get the cache (not included due to size)
+```
+cd source_data/ensembl/cache/
+wget ftp://ftp.ensembl.org/pub/release-84/variation/VEP/homo_sapiens_vep_84_GRCh38.tar.gz
+tar -zxvf homo_sapiens_vep_84_GRCh38.tar.gz
+```
+
+### Run
+```
+python scripts/annotation.py --input output/credible_snps/credible_snp_list_0.99.txt --output output/annotation/annotation
+```
