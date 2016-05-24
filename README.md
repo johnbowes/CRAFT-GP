@@ -100,7 +100,7 @@ Python packages:
 
 Data:
 * Ensembl cache homo_sapiens_vep_84_GRCh37
-* Roadmap Epigenomics (EDACC Release 9) - processed version supplied (not in github)
+* Roadmap Epigenomics (EDACC Release 9) - processed versionof three cell lines supplied in source_data/roadmap_r9/15_state_model/bed
 
 Scripts:
 * process_roadmap.sh - preprocessing script for roadmap data. Sorts and indexes bed files. NOT part of the pipeline.
