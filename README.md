@@ -87,10 +87,10 @@ Annotation of credible SNPs is performed using the ensembl Variant Effect Predic
 ### Requirements
 
 Software: 
-Variants Effect Predictor (VEP) version 84 
-Perl (tested on version 5.20.2) 
-Python (tested on anaconda 2.30) 
-Tabix (tested on version 0.2.6) 
+Variants Effect Predictor (VEP) version 84  
+Perl (tested on version 5.20.2)  
+Python (tested on anaconda 2.30)  
+Tabix (tested on version 0.2.6)  
 
 Python packages:
     PyVCF (tested on version 0.6.8)
