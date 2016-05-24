@@ -75,6 +75,13 @@ credible_snps <- do.call("rbind",cred)
 credible_file <- paste("output/credible_snps/credible_snps_",opt$cpp,".txt",sep="")
 write_delim(credible_snps, delim = " ", credible_file)
 
+# create list of credible SNP rs numbers for VEP input
+credible_snp_list <- credible_snps %>%
+	dplyr::select(SNPID)
+
+credible_snp_list_file = paste("output/credible_snps/credible_snp_list_",opt$cpp,".txt",sep="")
+write_delim(credible_snp_list, delim = " ", credible_snp_list_file, col_names = FALSE)
+
 # create data for bed file tracks
 cred_region <- summary_table %>%
         dplyr::select(chr, cred_start, cred_end, index) %>%

@@ -1,3 +1,5 @@
 output/**
 input/**
 scripts/abf.R
+source_data/ensembl/**
+source_data/roadmap_r9/**
