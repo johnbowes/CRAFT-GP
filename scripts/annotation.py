@@ -54,8 +54,6 @@ def write_config_file(eid_list):
                         "core_type          core"   "\n"
                         "dir                source_data/ensembl/cache" "\n"
                         "dir_cache          source_data/ensebl/cache" "\n"
-                        "host               130.88.97.228"  "\n"
-                        "port               3306"   "\n"          
                         "force_overwrite    1"      "\n"
                         "numbers            1"      "\n"
                         "polyphen           p"      "\n"
