@@ -18,15 +18,17 @@ source_local('abf.R')
 
 option_list = list(
 	make_option(c("-r", "--regions"), type="character", default=NULL,
-		help="List of regions file"),
+		            help="List of regions file"),
 	make_option(c("-a", "--affected"), type="integer", default=NULL,
                 help="Number of cases"),
 	make_option(c("-u", "--unaffected"), type="integer", default=NULL,
                 help="Number of controls"),
 	make_option(c("-s", "--stats"), type="character", default=NULL,
-		help="Summary statistics file"),
+		            help="Summary statistics file"),
 	make_option(c("-c", "--cpp"), type="double", default=0.99,
-                help="Cumulative posterior probability")
+                help="Cumulative posterior probability"),
+	make_option(c("-o", "--out"), type="character", default=NULL,
+                help="Directory path for saving results")
 ) 
 
 opt <- parse_args(OptionParser(option_list=option_list))
@@ -62,42 +64,44 @@ for(i in seq_along(cred)) {
 
 	# create summary information
 	index <- current_index
-	chr <- unique(subset$CHROM)
+	chr <- paste("chr", unique(subset$CHROM), sep = "")
 	region_n <- nrow(subset)
 	region_length <- diff(range(subset$POS))
+  region_start <- regions[i,]$start
+  region_end <- regions[i,]$end
 	cred_n <- nrow(cred[[i]])
 	cred_length <- diff(range(cred[[i]]$POS))
 	cred_start <- min(cred[[i]]$POS)
 	cred_end <-max(cred[[i]]$POS) 
 
-	summ[[i]] <- data.frame(index,chr,region_n,region_length,cred_n, cred_length,cred_start,cred_end, stringsAsFactors=FALSE)
+	summ[[i]] <- data.frame(index,chr,region_n,region_length,region_start,region_end,cred_n, cred_length,cred_start,cred_end, stringsAsFactors=FALSE)
 
 }
 
 # PJB need to create output dir if not present
-output_dir <- "output/credible_snps/"
-if (!file.exists(output_dir)) {
-
-        print(paste("Creating output dir:",output_dir))
-        dir.create(output_dir)
-
-}
+#output_dir <- "output/credible_snps/"
+#if (!file.exists(output_dir)) {
+#
+#        print(paste("Creating output dir:",output_dir))
+#        dir.create(output_dir)
+#
+#}
 
 # create summary table
 summary_table <- rbind_all(summ)
-summary_file <- paste("output/credible_snps/summary_table_",opt$cpp,".txt",sep="")
+summary_file <- paste(opt$out, "summary_table_", opt$cpp,".txt",sep="")
 write_delim(summary_table, delim = " ", summary_file)
 
 # create credible snp table
 credible_snps <- do.call("rbind",cred)
-credible_file <- paste("output/credible_snps/credible_snps_",opt$cpp,".txt",sep="")
+credible_file <- paste(opt$out, "credible_snps_", opt$cpp,".txt",sep="")
 write_delim(credible_snps, delim = " ", credible_file)
 
 # create list of credible SNP rs numbers for VEP input
 credible_snp_list <- credible_snps %>%
 	dplyr::select(SNPID)
 
-credible_snp_list_file = paste("output/credible_snps/credible_snp_list_",opt$cpp,".txt",sep="")
+credible_snp_list_file = paste(opt$out, "credible_snp_list_", opt$cpp,".txt",sep="")
 write_delim(credible_snp_list, delim = " ", credible_snp_list_file, col_names = FALSE)
 
 # create data for bed file tracks
@@ -112,8 +116,8 @@ cred_snps <- credible_snps %>%
         dplyr::select(chr, start, POS, SNPID)
 
 # create bed file
-bed_file <- paste("output/credible_snps/credible_snps_",opt$cpp,".bed",sep="")
-cat("track name=\"cred\" description=\"Cred interval\" visibility=1", file = bed_file, sep = "\n")
-write_delim(cred_region, bed_file, delim = " ", col_names = FALSE, append = TRUE)
-cat("track name=\"credSNPs\" description=\"Cred SNPs\" visibility=1", file = bed_file, sep = "\n", append = TRUE)
+bed_file <- paste(opt$out, "credible_snps_", opt$cpp,".bed",sep="")
+#cat("track name=\"cred\" description=\"Cred interval\" visibility=1", file = bed_file, sep = "\n")
+#write_delim(cred_region, bed_file, delim = " ", col_names = FALSE, append = TRUE)
+cat("track name=\"credSNPs\" description=\"Cred SNPs\" visibility=1", file = bed_file, sep = "\n")
 write_delim(cred_snps, bed_file, delim = " ", col_names = FALSE, append = TRUE)

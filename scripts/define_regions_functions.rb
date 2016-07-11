@@ -187,7 +187,7 @@ def calculation(cont_snps)
   return output_data,not_in_range_snps,num_cols
 end
 
-def write_output(output_data,cmoutput)
+def write_output(output_data,cmoutput, output)
 	#output cM regions
 	t = "\t"
 	if cmoutput 
@@ -197,9 +197,14 @@ def write_output(output_data,cmoutput)
 		# path = "outputs/regions_"+ $cM.to_s + "cm.txt"
 		# path_bound = "outputs/boundaries_"+ $cM.to_s + "cm.txt"
 		# path_bound_red = "outputs/red_boundaries_"+ $cM.to_s + "cm.txt"
-		path = "output/regions/supplementary/regions_"+ cM_m + "cm.txt"
-		path_bound = "output/regions/supplementary/boundaries_"+ cM_m + "cm.txt"
-		path_bound_red = "output/regions/region_boundaries_"+ cM_m + "cm.txt"
+
+    # edit 06/07/2016
+		#path = "output/regions/supplementary/regions_"+ cM_m + "cm.txt"
+		#path_bound = "output/regions/supplementary/boundaries_"+ cM_m + "cm.txt"
+		#path_bound_red = "output/regions/region_boundaries_"+ cM_m + "cm.txt"
+    path = output + "/supplementary/regions_"+ cM_m + "cm.txt"
+    path_bound = output + "/supplementary/boundaries_"+ cM_m + "cm.txt"
+    path_bound_red = output + "region_boundaries_"+ cM_m + "cm.txt"
 		dirs = [path,path_bound,path_bound_red]
 		dirs.each do |dir|
 			dirname = File.dirname(dir)

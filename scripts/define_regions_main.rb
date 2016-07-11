@@ -9,6 +9,7 @@ $cM = 0.1
 $bp = 0
 
 input = ""
+output = ""
 sInputPvals = ""
 
 # Parser for the arguments
@@ -20,6 +21,10 @@ OptionParser.new do |opts|
   opts.banner = "Usage: your_app [options]"
   opts.on('-i [ARG]', '--input_i [ARG]', "Specify the input_i") do |v|
     input = v
+  end
+
+  opts.on('-o [ARG]', '--output_o [ARG]', "Specify the output_o") do |v|
+    output = v
   end
 
   opts.on('-m [ARG]', '--cmregion_n [ARG]', "Specify the cM region m") do |v|
@@ -73,10 +78,16 @@ end
 b = Time.now
 puts "Compilation time: " + ((b-a)/60).to_s
 puts "Number of columns in input file :" + num_cols.to_s
-write_output(output_data,cm_output)
+write_output(output_data,cm_output,output)
+
+#if $bp==0
+#  path_bound_red = "output/regions/region_boundaries_"+ $cM.to_s.gsub(".","") + "cm.txt"
+#else
+#  path_bound_red = "output/regions/region_boundaries_"+ $bp.to_s + "bp.txt"
+#end
 
 if $bp==0
-  path_bound_red = "output/regions/region_boundaries_"+ $cM.to_s.gsub(".","") + "cm.txt"
+  path_bound_red = output + $cM.to_s.gsub(".","") + "cm.txt"
 else
-  path_bound_red = "output/regions/region_boundaries_"+ $bp.to_s + "bp.txt"
+  path_bound_red = output + $bp.to_s + "bp.txt"
 end

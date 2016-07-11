@@ -1,5 +1,21 @@
-output/**
+
+# NON-PIPELINE#
+###############
+.Rhistory
+README_deprecated.md
+notes.md
+
+# TEST DATA#
+############
 input/**
+
+# SCRIPTS#
+##########
 scripts/abf.R
+scripts/visualisation_functions_v2.R
+
+# SOURCE DATA#
+##############
 source_data/ensembl/**
-source_data/roadmap_r9/15_state_model/raw/**
+source_data/roadmap_r9/**
+
