@@ -1,0 +1,68 @@
+library(Gviz)
+library(dplyr)
+library(readr)
+library(biomaRt)
+library(optparse)
+library(stringr)
+
+source('scripts/visualisation_functions.R')
+
+# OPTIONS
+
+# add:
+# --out default output/plots/
+
+option_list = list(
+  make_option(c("-r", "--regions_file"), type="character", default=NULL,
+              help="Region summary table"),
+  make_option(c("-s", "--snp_file"), type="character", default=NULL,
+              help="Credible SNPs"),
+  make_option(c("-e", "--eid"), type="character", default=NULL,
+              help="Epigenome to plot against"),
+  make_option(c("-g", "--genome_build"), type="character", default="hg19",
+              help="Genome build"),
+  make_option(c("-o", "--out"), type="character", default=NULL,
+              help="Output file path")
+) 
+
+opt <- parse_args(OptionParser(option_list=option_list))
+
+# list of test user arguments for testing
+if(interactive())
+  opt <- list(genome_build = "hg19",
+              regions_file = "test_results/credible_snps/summary_table_0.99.txt",
+              snp_file = "test_results/credible_snps/credible_snps_0.99.bed",
+              eid = "CD4_Naive_Primary_Cells,CD8_Memory_Primary_Cells,CD8_Naive_Primary_Cells,CD4+_CD25-_IL17-_PMA-Ionomycin_stimulated_MACS_purified_Th_Primary_Cells",
+              out = "test_results/plots")
+
+# SOURCE DATA - not user defined
+cytoband_file <- "source_data/ucsc/cytoBand.txt"
+ensembl = useMart(biomart="ENSEMBL_MART_ENSEMBL", host="grch37.ensembl.org", path="/biomart/martservice", dataset="hsapiens_gene_ensembl")
+e_dir <- "source_data/roadmap_r9/15_state_model/bed/"
+
+# LOAD DATA
+
+# region summary table
+regions <- read_delim(opt$regions_file, col_names = TRUE, delim = " ")
+
+# cytogenetic bands
+cytobands <- read_delim(cytoband_file, delim="\t",
+    col_names = c("chrom", "chromStart", "chromEnd", "name", "gieStain")) %>% as.data.frame()
+
+# credible SNPs
+credible_snps <- read_delim(opt$snp_file, delim = " ", col_names = c("chromosome","start","end","id"), skip = 1) %>%
+  as.data.frame()
+
+# epigenome data
+epi_list <- strsplit(opt$eid, ',')[[1]]
+for(e in epi_list){
+   assign(e, read_eid(e, e_dir))
+}
+
+# PLOT EACH REGION - multiple epigenomes
+for (row in seq_len(nrow(regions))){
+  region_list <- as.list(regions[row,])
+  plot_region(region_list, credible_snps, epi_list, opt$out, opt$genome_build)
+}
+
+
