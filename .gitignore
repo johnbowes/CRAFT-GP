@@ -8,6 +8,8 @@ notes.md
 # TEST DATA#
 ############
 input/**
+test_results/
+test_results.tar.gz
 
 # SCRIPTS#
 ##########
