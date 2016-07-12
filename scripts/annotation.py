@@ -82,7 +82,7 @@ def run_vep(input, output):
 
     vep_vcf = output + ".vcf"   
 
-    vep_cmd = "variant_effect_predictor.pl -i %s -o %s --config temp.config" % (input, vep_vcf)
+    vep_cmd = "variant_effect_predictor.pl --no_progress -i %s -o %s --config temp.config" % (input, vep_vcf)
     os.system(vep_cmd)
     os.system("rm temp.config")
 
