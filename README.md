@@ -32,11 +32,11 @@ __iCSF modules__
 
 When running on the University of Manchester computing clusters (iCSF) the software dependencies can be dealt with by loading the following modules:
 
-module load apps/gcc/ruby/2.2.3
-module load apps/binapps/anaconda/2.3.0
-module load apps/gcc/R/3.3.0
-module load apps/binapps/ensembl-api/84
-module load apps/gcc/tabix/0.2.6
+module load apps/gcc/ruby/2.2.3  
+module load apps/binapps/anaconda/2.3.0  
+module load apps/gcc/R/3.3.0  
+module load apps/binapps/ensembl-api/84  
+module load apps/gcc/tabix/0.2.6  
 
 Source data
 -----------
@@ -51,9 +51,9 @@ User input
 
 __Run variables__
 
-NAME                # name for labelling output files
-INDEX_SNP_FILE      # file name for list of index SNPs
-SUMMARY_STATS_FILE  # file name for GWAS summary statistics
+NAME                # name for labelling output files  
+INDEX_SNP_FILE      # file name for list of index SNPs  
+SUMMARY_STATS_FILE  # file name for GWAS summary statistics  
 DISTANCE_TYPE       # how the distance should be defined (base pairs (-r) of centimorgans (-m))
 DISTANCE='0.1'                                  # distance value
 CASES='1962'                                    # number of cases in GWAS summary statistics
