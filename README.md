@@ -6,7 +6,7 @@ CRAFT
 Acknowledgements
 ----------------
 
-CRAFT using the abf.R function written by [Chris Wallace](http://chr1swallace.github.io/) for the calculation of credible SNPs and can be found [here](http://chr1swallace.github.io/).
+CRAFT uses the abf.R function written by [Chris Wallace](http://chr1swallace.github.io/) for the calculation of credible SNPs and can be found [here](http://chr1swallace.github.io/).
 
 Requirements
 ------------
@@ -109,20 +109,28 @@ These are currently defined witihin the run_all.sh script:
 
 *NAME*  
     Name for labelling output directory and files  
+
 *INDEX_SNP_FILE*  
     File name for list of index SNPs, see below for format  
+
 *SUMMARY_STATS_FILE*  
     File name for GWAS summary statistics, see below for format  
+
 *DISTANCE_TYPE*  
     A flag to specifiy how the distance should be defined, this can either be base pairs (-r) of centimorgans (-m)  
+
 *DISTANCE*  
     Size of region as defined above, typical values for cM are 0.1 0r 0.2  
+
 *CASES*  
     Number of cases in GWAS summary statistics  
+
 *CONTROLS*  
     Number of controls in GWAS summary statistics  
+
 *EPIGENOMES*  
     List of roadmap epigenomics dataset to annotation against    
+    
 
 User input file formats
 -----------------------
