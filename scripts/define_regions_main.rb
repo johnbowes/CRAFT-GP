@@ -87,7 +87,7 @@ write_output(output_data,cm_output,output)
 #end
 
 if $bp==0
-  path_bound_red = output + $cM.to_s.gsub(".","") + "cm.txt"
+  path_bound_red = File.join(output,$cM.to_s.gsub(".","") + "cm.txt")
 else
-  path_bound_red = output + $bp.to_s + "bp.txt"
+  path_bound_red = File.join(output,$bp.to_s + "bp.txt")
 end
