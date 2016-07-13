@@ -9,7 +9,7 @@ $cM = 0.1
 $bp = 0
 
 input = ""
-output = ""
+output = Dir.pwd
 sInputPvals = ""
 
 # Parser for the arguments
