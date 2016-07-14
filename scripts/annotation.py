@@ -54,8 +54,6 @@ def write_config_file(eid_list):
                         "core_type          core"   "\n"
                         "dir                source_data/ensembl/cache" "\n"
                         "dir_cache          source_data/ensebl/cache" "\n"
-                        "host               130.88.97.228"  "\n"
-                        "port               3306"   "\n"          
                         "force_overwrite    1"      "\n"
                         "numbers            1"      "\n"
                         "polyphen           p"      "\n"
@@ -84,7 +82,7 @@ def run_vep(input, output):
 
     vep_vcf = output + ".vcf"   
 
-    vep_cmd = "variant_effect_predictor.pl -i %s -o %s --config temp.config" % (input, vep_vcf)
+    vep_cmd = "variant_effect_predictor.pl --no_progress -i %s -o %s --config temp.config" % (input, vep_vcf)
     os.system(vep_cmd)
     os.system("rm temp.config")
 
