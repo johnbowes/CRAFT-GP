@@ -11,56 +11,60 @@ import vcf as pyvcf
 # define data paths
 
 bed_path = "source_data/roadmap_r9/15_state_model/bed/"
+meta_file = "source_data/roadmap_r9/meta_data/roadmap_consolidated_epigenome_ids.txt"
 
 def get_options():
 
         parser = argparse.ArgumentParser()
 
         parser.add_argument('--input', action='store', dest='input_file', required=True,
-                    help='Input vcf file')
+                    help='Inputcredible snp file')
         parser.add_argument('--output', action='store', dest='output_file', required=True,
                     help='Output file')
-        parser.add_argument('--eid', nargs="+", action='store', dest='eid_name', required=False, default=['E116'],
-                    help='Epigenome name for annotation (default = GM12878_Lymphoblastoid')
+        parser.add_argument('--epi_names', action='store', dest='epi_names', required=False,
+                    help='Single or comma separated list of epigenome names')
+        parser.add_argument('--epi_group', action='store', dest='epi_group', required=False, default='ENCODE2012',
+                    help='Single or comma separated list of epigenome groups (e.g. Blood_and_T-cell)')
 
         args =  parser.parse_args()
         return args
+
+def get_group_ids(group_list, meta_file):
+    """
+    Return a list of epigenome IDs based on a group label.
+    """
+
+    group_list = group_list.split(",")
+
+    meta = pd.read_table(meta_file, sep="\t")
+    meta = meta[meta['Group'].isin(group_list)]
+
+    meta_list = meta['Epigenome name (from EDACC Release 9 directory)'].tolist()
+
+    return meta_list
 
 def write_config_file(eid_list):
     """
     Write a VEP configuration file.
     """
 
-    # config_arguments = ("biotype            1"      "\n"
-    #                     "cache              1"      "\n"
-    #                     "canonical          1"      "\n"
-    #                     "assembly           GRCh38" "\n"
-    #                     "core_type          core"   "\n"
-    #                     "dir                source_data/ensembl/cache" "\n"
-    #                     "dir_cache          source_data/ensebl/cache" "\n"
-    #                     "host               130.88.97.228"  "\n"
-    #                     "port               3306"   "\n"          
-    #                     "force_overwrite    1"      "\n"
-    #                     "numbers            1"      "\n"
-    #                     "polyphen           p"      "\n"
-    #                     "sift               p"      "\n"
-    #                     "symbol             1"      "\n"
-    #                     "vcf                1"      "\n")
-
     config_arguments = ("biotype            1"      "\n"
                         "cache              1"      "\n"
                         "canonical          1"      "\n"
-                        "assembly           GRCh38" "\n"
+                        "assembly           GRCh37" "\n"
+                        "cache_version      84"     "\n"
                         "core_type          core"   "\n"
                         "dir                source_data/ensembl/cache" "\n"
                         "dir_cache          source_data/ensebl/cache" "\n"
                         "host               130.88.97.228"  "\n"
-                        "port               3306"   "\n"          
+                        "port               3337"   "\n"
+                        "plugin             CADD,source_data/ensembl/plugins/CADD/1000G.tsv.gz" "\n"
                         "force_overwrite    1"      "\n"
                         "numbers            1"      "\n"
                         "polyphen           p"      "\n"
                         "sift               p"      "\n"
                         "symbol             1"      "\n"
+                        "chr                1-22"   "\n"
                         "vcf                1"      "\n")
 
     custom_arguments = "custom\t" 
@@ -84,7 +88,7 @@ def run_vep(input, output):
 
     vep_vcf = output + ".vcf"   
 
-    vep_cmd = "variant_effect_predictor.pl -i %s -o %s --config temp.config" % (input, vep_vcf)
+    vep_cmd = "variant_effect_predictor.pl -i %s -o %s --config temp.config -v" % (input, vep_vcf)
     os.system(vep_cmd)
     os.system("rm temp.config")
 
@@ -120,15 +124,39 @@ def main():
     # define input/output
     options = get_options()
 
-    # run VEP annotation
-    write_config_file(options.eid_name)
-    run_vep(options.input_file, options.output_file)
+    # process input file
+    credible_snps = pd.read_table(options.input_file, sep = " ")
+    credible_snps = credible_snps[['SNPID', 'PVAL', 'pp', 'cpp']]
 
-    # tabulate vcf and write to file
-    table = tabulate_vcf(options.output_file + '.vcf', options.eid_name)
+    # create a SNP list for VEP input
+    snp_list_file = options.output_file + "snp_list.txt"
+    credible_snps.to_csv(snp_list_file, columns = ['SNPID'], index = False, header = False)
+
+    # get list of epigenomes
+    if options.epi_names:
+        epigenomes = options.epi_names.split(",")
+    else:
+        epigenomes = get_group_ids(options.epi_group, meta_file)
+
+    # write epigenomes to file
+    epigenome_file = options.output_file + '.epigenomes'
+    epi_string = ','.join(epigenomes)
+    with open(epigenome_file, "w") as file:
+        file.write(epi_string)
+
+    # run VEP annotation
+    write_config_file(epigenomes)
+    run_vep(snp_list_file, options.output_file)
+
+    # tabulate vcf
+    table = tabulate_vcf(options.output_file + '.vcf', epigenomes)
+
+    # merge posterior probabilities
+    table = pd.merge(table, credible_snps, how = 'left', left_on = 'ID', right_on = 'SNPID')
+
+    # write table to file
     table_file = options.output_file + ".csv"
     table.to_csv(table_file, index=False)
-
 
 if __name__=='__main__':
     main()

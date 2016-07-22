@@ -28,7 +28,9 @@ option_list = list(
 	make_option(c("-c", "--cpp"), type="double", default=0.99,
                 help="Cumulative posterior probability"),
 	make_option(c("-o", "--out"), type="character", default=NULL,
-                help="Directory path for saving results")
+                help="Directory path for saving results"),
+	make_option(c("-b", "--bed"), type="character", default=NULL,
+	            help="Directory path for saving bed files")
 ) 
 
 opt <- parse_args(OptionParser(option_list=option_list))
@@ -116,8 +118,8 @@ cred_snps <- credible_snps %>%
         dplyr::select(chr, start, POS, SNPID)
 
 # create bed file
-bed_file <- paste(opt$out, "credible_snps_", opt$cpp,".bed",sep="")
-#cat("track name=\"cred\" description=\"Cred interval\" visibility=1", file = bed_file, sep = "\n")
-#write_delim(cred_region, bed_file, delim = " ", col_names = FALSE, append = TRUE)
+bed_file <- paste(opt$bed, "credible_snps_", opt$cpp,".bed",sep="")
+cat("track name=\"cred\" description=\"Cred interval\" visibility=1", file = bed_file, sep = "\n")
+write_delim(cred_region, bed_file, delim = " ", col_names = FALSE, append = TRUE)
 cat("track name=\"credSNPs\" description=\"Cred SNPs\" visibility=1", file = bed_file, sep = "\n")
 write_delim(cred_snps, bed_file, delim = " ", col_names = FALSE, append = TRUE)

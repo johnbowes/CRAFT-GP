@@ -11,6 +11,11 @@ input/**
 test_results/
 test_results.tar.gz
 
+# STUDY DATA#
+#############
+okada_results/
+okada_run_all.sh
+
 # SCRIPTS#
 ##########
 scripts/abf.R

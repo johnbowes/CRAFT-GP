@@ -9,8 +9,8 @@ source('scripts/visualisation_functions.R')
 
 # OPTIONS
 
-# add:
-# --out default output/plots/
+# eid option has to to expect the list of epigenomes in a comma separated
+# string from a file.
 
 option_list = list(
   make_option(c("-r", "--regions_file"), type="character", default=NULL,
@@ -31,8 +31,9 @@ opt <- parse_args(OptionParser(option_list=option_list))
 if(interactive())
   opt <- list(genome_build = "hg19",
               regions_file = "test_results/credible_snps/summary_table_0.99.txt",
-              snp_file = "test_results/credible_snps/credible_snps_0.99.bed",
-              eid = "CD4_Naive_Primary_Cells,CD8_Memory_Primary_Cells,CD8_Naive_Primary_Cells,CD4+_CD25-_IL17-_PMA-Ionomycin_stimulated_MACS_purified_Th_Primary_Cells",
+              snp_file = "test_results/credible_snps/credible_snps_0.99.txt",
+              #eid = "CD4_Naive_Primary_Cells,CD8_Memory_Primary_Cells,CD8_Naive_Primary_Cells,CD4+_CD25-_IL17-_PMA-Ionomycin_stimulated_MACS_purified_Th_Primary_Cells",
+              eid = "test_results/annotation/annotation.epigenomes",
               out = "test_results/plots")
 
 # SOURCE DATA - not user defined
@@ -50,11 +51,18 @@ cytobands <- read_delim(cytoband_file, delim="\t",
     col_names = c("chrom", "chromStart", "chromEnd", "name", "gieStain")) %>% as.data.frame()
 
 # credible SNPs
-credible_snps <- read_delim(opt$snp_file, delim = " ", col_names = c("chromosome","start","end","id"), skip = 1) %>%
-  as.data.frame()
+#credible_snps <- read_delim(opt$snp_file, delim = " ", col_names = c("chromosome","start","end","id"), skip = 1) %>%
+#  as.data.frame()
+
+credible_snps <- read_delim(opt$snp_file, delim = " ") %>%
+  mutate(start = POS - 1) %>%
+  mutate(chromosome = paste("chr", CHROM, sep = "")) %>%
+  dplyr::select(chromosome, start, POS, SNPID, pp) %>%
+  rename(end = POS) %>%
+  rename(id = SNPID)
 
 # epigenome data
-epi_list <- strsplit(opt$eid, ',')[[1]]
+epi_list <- strsplit(read_file(opt$eid), ',')[[1]]
 for(e in epi_list){
    assign(e, read_eid(e, e_dir))
 }

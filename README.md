@@ -54,7 +54,11 @@ cd -
 
 Download CADD plugin data
 ```
-Not currently implemented
+mkdir -p source_data/ensembl/plugins/CADD
+cd source_data/ensembl/plugins/CADD/
+wget http://krishna.gs.washington.edu/download/CADD/v1.3/1000G.tsv.gz
+wget http://krishna.gs.washington.edu/download/CADD/v1.3/1000G.tsv.gz.tbi
+cd -
 ```
 
 __Roadmap Epigenomics__
@@ -228,6 +232,8 @@ __output__
 Annotation
 ----------
 
+**Note:** the current version uses assemlby GRCh37 and VEP version 84 it therefore requires access to port 3337 on ensembldb.ensembl.org. When using iCSF this has been handled by adding ensembldb.ensembl.org:3337 to the NAT server and using the options --host=130.88.97.228 --port=3337 when calling VEP.
+
 __Run__
 
 ```
@@ -257,12 +263,35 @@ Rscript scripts/visualisation_main.R \
 
 __output__
 
+Known issues
+------------
+
+* epigenome names are currently case sensitive
+* gwas summary stats must be space sepatated
+* No error catching implemented
+
 TODO
 ----
 
-* Bed track for define regions
-* Change output directory for credible snp bed file
-* Collate tracks into a hub
+__Before release__
+* test full offline mode with VCF input
+* report non-annotated SNPs
+* sort VEP output - minimise 
+* file delimiters
+* strip out non-rs numbers - display warning - not necessary with offline mode?
+* decide on use of chromosome label (either chr1 or 1)
+* cross-reference table for epigenomes
+    - can VEP use the raw Roadmap data?
+    - add hyperlink to README
 * Are all output used/useful?
     - esp. cred SNP stage
-* Add CADD score to annotation
+* create data bundle
+    - where to host
+* group epigenome tracks
+
+__Nice to have__
+* output list of credible SNPs with no annotation
+* input options - PLINK
+* get MAF from reference panel
+* convert cache to tabix
+    - https://gist.github.com/ckandoth/57d189f018b448774704d3b2191720a6

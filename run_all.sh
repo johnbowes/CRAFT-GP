@@ -48,13 +48,15 @@ python scripts/filter_summary_stats.py \
 
 # SNP sets
 OUTPUT="${OUTPUT_DIR}/credible_snps/"
+BED_OUTPUT="${OUTPUT_DIR/bed/"
 
 Rscript scripts/credible_snps_main.R \
 	-r $REGIONS \
 	-a $CASES \
 	-u $CONTROLS \
 	-s $GWAS_SUBSET \
-	-o $OUTPUT
+	-o $OUTPUT \
+	-b $BED_OUTPUT
 
 # clean up
 rm $GWAS_SUBSET
@@ -62,19 +64,19 @@ rm $GWAS_SUBSET
 #
 # ANNOTATION
 #
-CREDIBLE_SNPS='output/credible_snps/credible_snp_list_0.99.txt'
+CREDIBLE_SNPS="${OUTPUT_DIR}/credible_snps/credible_snps_0.99.txt"
 OUTPUT="${OUTPUT_DIR}/annotation/annotation"
 
 python scripts/annotation.py \
 	--input $CREDIBLE_SNPS \
 	--output $OUTPUT \
-	--eid $EPIGENOMES
+	--epi_group Blood_and_T-cell,Brain
 
 #
 # VISUALISATION
 #
 REGIONS="${OUTPUT_DIR}/credible_snps/summary_table_0.99.txt"
-SNPS="${OUTPUT_DIR}/credible_snps/credible_snps_0.99.bed"
+SNPS="${OUTPUT_DIR}/credible_snps/credible_snps_0.99.txt"
 OUTPUT="${OUTPUT_DIR}/plots/"
 
 Rscript scripts/visualisation_main.R \
