@@ -20,6 +20,7 @@ DISTANCE='0.1'
 CASES='1962'
 CONTROLS='8923'
 EPIGENOMES='CD8_Naive_Primary_Cells'
+EPIGENOMES_TYPE='list'
 
 #
 # CREATE OUTPUT DIRECTORY FOR RESULTS
@@ -32,6 +33,9 @@ mkdir -p ${OUTPUT_DIR}/{regions,credible_snps,plots,annotation,bed}
 #
 OUTPUT="${OUTPUT_DIR}/regions/"
 ruby scripts/define_regions_main.rb -i $INDEX_SNP_FILE $DISTANCE_TYPE $DISTANCE -o $OUTPUT
+
+# remove unnecessary dir
+rm -r ${OUTPUT}supplementary/
 
 #
 # CALCULATE CREDIBLE SNP SETS
@@ -48,7 +52,7 @@ python scripts/filter_summary_stats.py \
 
 # SNP sets
 OUTPUT="${OUTPUT_DIR}/credible_snps/"
-BED_OUTPUT="${OUTPUT_DIR/bed/"
+BED_OUTPUT="${OUTPUT_DIR}/bed/"
 
 Rscript scripts/credible_snps_main.R \
 	-r $REGIONS \
@@ -70,7 +74,8 @@ OUTPUT="${OUTPUT_DIR}/annotation/annotation"
 python scripts/annotation.py \
 	--input $CREDIBLE_SNPS \
 	--output $OUTPUT \
-	--epi_group Blood_and_T-cell,Brain
+	--epi_names $EPIGENOMES \
+	--epi_type $EPIGENOMES_TYPE
 
 #
 # VISUALISATION
@@ -78,6 +83,7 @@ python scripts/annotation.py \
 REGIONS="${OUTPUT_DIR}/credible_snps/summary_table_0.99.txt"
 SNPS="${OUTPUT_DIR}/credible_snps/credible_snps_0.99.txt"
 OUTPUT="${OUTPUT_DIR}/plots/"
+EPIGENOMES="${OUTPUT_DIR}/annotation/annotation.epigenomes"
 
 Rscript scripts/visualisation_main.R \
 	-r ${REGIONS} \

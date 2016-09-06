@@ -274,22 +274,24 @@ TODO
 ----
 
 __Before release__
+
+*offline mode*
 * test full offline mode with VCF input
-* report non-annotated SNPs
-* sort VEP output - minimise 
+
+*input*
 * file delimiters
 * strip out non-rs numbers - display warning - not necessary with offline mode?
 * decide on use of chromosome label (either chr1 or 1)
-* cross-reference table for epigenomes
-    - can VEP use the raw Roadmap data?
-    - add hyperlink to README
+*
+*output*
+* report non-annotated SNPs
 * Are all output used/useful?
     - esp. cred SNP stage
 * create data bundle
     - where to host
-* group epigenome tracks
 
 __Nice to have__
+* wrap the whole thing in a python wrapper
 * output list of credible SNPs with no annotation
 * input options - PLINK
 * get MAF from reference panel

@@ -21,10 +21,10 @@ def get_options():
                     help='Inputcredible snp file')
         parser.add_argument('--output', action='store', dest='output_file', required=True,
                     help='Output file')
-        parser.add_argument('--epi_names', action='store', dest='epi_names', required=False,
-                    help='Single or comma separated list of epigenome names')
-        parser.add_argument('--epi_group', action='store', dest='epi_group', required=False, default='ENCODE2012',
-                    help='Single or comma separated list of epigenome groups (e.g. Blood_and_T-cell)')
+        parser.add_argument('--epi_names', action='store', dest='epi_names', required=False, default='ENCODE2012',
+                    help='Group name or list of epigenome names (seperated by space or comma')
+        parser.add_argument('--epi_type', action='store', dest='epi_type', required=False, default='group',
+                    help='How are epigenome names specified: list or group')
 
         args =  parser.parse_args()
         return args
@@ -113,7 +113,10 @@ def tabulate_vcf(vcf_file, eid_list):
             test = snp_info + csq_info + eid_info
             result = pd.Series(test, index=header)
             df = df.append(result, ignore_index=True)
-    
+
+    # remove unwanted fields
+    fields_to_remove = ['FLAGS','SYMBOL_SOURCE','HGNC_ID','CANONICAL','HGVSc','HGVSp','cDNA_position','CDS_position','Protein_position','Amino_acids','Codons','Existing_variation']
+    df.drop(fields_to_remove, axis=1, inplace=True)
 
     df.replace("", ".", inplace=True)
 
@@ -133,10 +136,10 @@ def main():
     credible_snps.to_csv(snp_list_file, columns = ['SNPID'], index = False, header = False)
 
     # get list of epigenomes
-    if options.epi_names:
+    if options.epi_type == "list":
         epigenomes = options.epi_names.split(",")
     else:
-        epigenomes = get_group_ids(options.epi_group, meta_file)
+        epigenomes = get_group_ids(options.epi_names, meta_file)
 
     # write epigenomes to file
     epigenome_file = options.output_file + '.epigenomes'
