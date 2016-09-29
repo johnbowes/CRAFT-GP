@@ -54,7 +54,7 @@ python scripts/filter_summary_stats.py \
 OUTPUT="${OUTPUT_DIR}/credible_snps/"
 BED_OUTPUT="${OUTPUT_DIR}/bed/"
 
-Rscript scripts/credible_snps_main.R \
+Rscript --vanilla scripts/credible_snps_main.R \
 	-r $REGIONS \
 	-a $CASES \
 	-u $CONTROLS \
@@ -85,7 +85,7 @@ SNPS="${OUTPUT_DIR}/credible_snps/credible_snps_0.99.txt"
 OUTPUT="${OUTPUT_DIR}/plots/"
 EPIGENOMES="${OUTPUT_DIR}/annotation/annotation.epigenomes"
 
-Rscript scripts/visualisation_main.R \
+Rscript --vanilla scripts/visualisation_main.R \
 	-r ${REGIONS} \
 	-s ${SNPS} \
 	-e $EPIGENOMES \

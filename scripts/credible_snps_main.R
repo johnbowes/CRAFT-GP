@@ -35,6 +35,15 @@ option_list = list(
 
 opt <- parse_args(OptionParser(option_list=option_list))
 
+if(interactive())
+  opt <- list(regions = "test_results/regions/region_boundaries_01cm.txt",
+  			      affected = 1962,
+              unaffected = 8923,
+              stats = "test_results/credible_snps/summary_stats_subset.txt",
+              cpp = 0.99,
+              out = "test_results/credible_snps/",
+              bed = "test_results/bed/")
+
 # read regions file
 regions <- read_delim(opt$regions, delim = "\t", col_names = c('index','locus')) %>%
 	separate(locus, sep = "[:-]", c('chr','start','end'))
@@ -46,7 +55,6 @@ data <- read_delim(opt$stats, delim = " ")
 data$BF <- -abf(p=data$PVAL, maf=data$A1_UNAFF, n0=opt$affected, n1=opt$unaffected)
 
 # define credible SNP sets
-
 cred <- summ  <- vector("list",nrow(regions))
 
 for(i in seq_along(cred)) {
@@ -108,18 +116,24 @@ write_delim(credible_snps, delim = " ", credible_file)
 
 # create data for bed file tracks
 cred_region <- summary_table %>%
-        dplyr::select(chr, cred_start, cred_end, index) %>%
-        mutate(chr = paste('chr',chr,sep=''))
+        dplyr::select(chr, cred_start, cred_end, index)
 
 cred_snps <- credible_snps %>%
-        mutate(start = POS - 1) %>%
+        mutate(start = as.integer(POS - 1)) %>%
         mutate(chr = paste('chr',CHROM,sep='')) %>%
         arrange(CHROM, start) %>%
         dplyr::select(chr, start, POS, SNPID)
+
+# write sessionInfo to file
+writeLines(capture.output(sessionInfo()), "sessionInfo_cred_snps.txt")
+
+# save image for comparing workspace objects
+save.image("credible_snps_image.RData")
 
 # create bed file
 bed_file <- paste(opt$bed, "credible_snps_", opt$cpp,".bed",sep="")
 cat("track name=\"cred\" description=\"Cred interval\" visibility=1", file = bed_file, sep = "\n")
 write_delim(cred_region, bed_file, delim = " ", col_names = FALSE, append = TRUE)
-cat("track name=\"credSNPs\" description=\"Cred SNPs\" visibility=1", file = bed_file, sep = "\n")
+cat("track name=\"credSNPs\" description=\"Cred SNPs\" visibility=1", file = bed_file, sep = "\n", append = TRUE)
 write_delim(cred_snps, bed_file, delim = " ", col_names = FALSE, append = TRUE)
+

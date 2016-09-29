@@ -76,6 +76,12 @@ for(e in epi_list){
    assign(e, read_eid(e, e_dir))
 }
 
+# write sessionInfo to file
+writeLines(capture.output(sessionInfo()), "sessionInfo_annotation.txt")
+
+# save image for comparing workspace objects
+save.image("annotation_image.RData")
+
 # PLOT EACH REGION - multiple epigenomes
 for (row in seq_len(nrow(regions))){
   region_list <- as.list(regions[row,])
