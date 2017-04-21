@@ -13,8 +13,8 @@ module load apps/gcc/tabix/0.2.6
 # DEFINE USER INPUT VARIABLES
 #
 NAME='test'
-INDEX_SNP_FILE='input/test/test_index_snps.txt'		
-SUMMARY_STATS_FILE='input/test/test_summary_stats.txt'
+INDEX_SNP_FILE='input/test_index_snps.txt'		
+SUMMARY_STATS_FILE='input/test_summary_stats.txt'
 DISTANCE_TYPE='-m'
 DISTANCE='0.1'
 CASES='1962'
