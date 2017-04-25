@@ -141,12 +141,17 @@ def main():
     options = get_options()
 
     # process input file
-    cols = ['CHROM','POS','A1','A2']
+    cols = ['SNPID','CHROM','POS','A1','A2']
     credible_snps = pd.read_table(options.input_file, sep = " ", comment="#")[cols]
+    
+    # save POS and SNPID to merge with annotation output
+    cols_id = ['SNPID','POS']
+    snpid_extract = credible_snps[cols_id]
 
     # create a SNP list for VEP input
     snp_list_file = options.output_file + "snp_list.txt"
     credible_snps = create_snps_file(credible_snps, snp_list_file)
+    
     
     # get list of epigenomes
     if options.epi_type == "list":
@@ -169,6 +174,7 @@ def main():
 
     # merge posterior probabilities
     table = pd.merge(table, credible_snps, how = 'left', left_on = 'POS',right_on = 'POS')
+    table = pd.merge(table, snpid_extract, how = 'left', left_on = 'POS',right_on = 'POS')    
 
     # write table to file
     table_file = options.output_file + ".csv"
