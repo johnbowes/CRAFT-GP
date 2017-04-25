@@ -11,7 +11,7 @@ import vcf as pyvcf
 # define data paths
 
 bed_path = "source_data/roadmap_r9/15_state_model/bed/"
-meta_file = "source_data/roadmap_r9/meta_data/roadmap_consolidated_epigenome_ids.txt"
+meta_file = "source_data/roadmap_r9/meta_data/roadmap_consolidated_epigenome_ids.csv"
 
 def get_options():
 
@@ -45,7 +45,7 @@ def get_group_ids(group_list, meta_file):
 
 def write_config_file(eid_list):
     """
-    Write a VEP configuration file.
+    Write a VEP configuration file. 
     """
 
     config_arguments = ("biotype            1"      "\n"
@@ -55,9 +55,7 @@ def write_config_file(eid_list):
                         "cache_version      84"     "\n"
                         "core_type          core"   "\n"
                         "dir                source_data/ensembl/cache" "\n"
-                        "dir_cache          source_data/ensebl/cache" "\n"
-                        "host               130.88.97.228"  "\n"
-                        "port               3337"   "\n"
+                        "dir_cache          source_data/ensembl/cache" "\n"
                         "plugin             CADD,source_data/ensembl/plugins/CADD/1000G.tsv.gz" "\n"
                         "force_overwrite    1"      "\n"
                         "numbers            1"      "\n"
@@ -65,7 +63,8 @@ def write_config_file(eid_list):
                         "sift               p"      "\n"
                         "symbol             1"      "\n"
                         "chr                1-22"   "\n"
-                        "vcf                1"      "\n")
+                        "vcf                1"      "\n"
+                        "offline            1"      "\n")
 
     custom_arguments = "custom\t" 
 
@@ -88,7 +87,7 @@ def run_vep(input, output):
 
     vep_vcf = output + ".vcf"   
 
-    vep_cmd = "variant_effect_predictor.pl -i %s -o %s --config temp.config --no_progress" % (input, vep_vcf)
+    vep_cmd = "variant_effect_predictor.pl -i %s -o %s --config temp.config  --no_progress" % (input, vep_vcf)
     os.system(vep_cmd)
     os.system("rm temp.config")
 
@@ -121,20 +120,34 @@ def tabulate_vcf(vcf_file, eid_list):
     df.replace("", ".", inplace=True)
 
     return df
-
+    
+def create_snps_file (credible_snps, snp_list_file):
+    """
+    create a SNP list for VEP inpu
+    """
+    credible_snps ['alleles'] = credible_snps ['A1'] + '/' + credible_snps ['A2']
+    credible_snps = credible_snps.drop('A1',1)
+    credible_snps = credible_snps.drop('A2',1)
+    credible_snps ['POS2'] = credible_snps ['POS'] 
+    cols = ['CHROM','POS','POS2','alleles']
+    credible_snps = credible_snps [cols]     
+    credible_snps.to_csv(snp_list_file, sep='\t', index = False, header = False)
+    
+    return credible_snps   
+     
 def main():
 
     # define input/output
     options = get_options()
 
     # process input file
-    credible_snps = pd.read_table(options.input_file, sep = " ")
-    credible_snps = credible_snps[['SNPID', 'PVAL', 'pp', 'cpp']]
+    cols = ['CHROM','POS','A1','A2']
+    credible_snps = pd.read_table(options.input_file, sep = " ", comment="#")[cols]
 
     # create a SNP list for VEP input
     snp_list_file = options.output_file + "snp_list.txt"
-    credible_snps.to_csv(snp_list_file, columns = ['SNPID'], index = False, header = False)
-
+    credible_snps = create_snps_file(credible_snps, snp_list_file)
+    
     # get list of epigenomes
     if options.epi_type == "list":
         epigenomes = options.epi_names.split(",")
@@ -150,12 +163,12 @@ def main():
     # run VEP annotation
     write_config_file(epigenomes)
     run_vep(snp_list_file, options.output_file)
-
+    
     # tabulate vcf
     table = tabulate_vcf(options.output_file + '.vcf', epigenomes)
 
     # merge posterior probabilities
-    table = pd.merge(table, credible_snps, how = 'left', left_on = 'ID', right_on = 'SNPID')
+    table = pd.merge(table, credible_snps, how = 'left', left_on = 'POS',right_on = 'POS')
 
     # write table to file
     table_file = options.output_file + ".csv"
