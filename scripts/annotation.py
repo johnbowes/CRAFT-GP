@@ -179,6 +179,9 @@ def main():
     # remove unwanted columns
     fields_to_remove = ['POS2','CHROM_y']
     table.drop(fields_to_remove, axis=1, inplace=True)
+    
+    # rename CHROM_x
+    table.rename (columns={'CHROM_x':'CHROM'}, inplace=True)
 
     # write table to file
     table_file = options.output_file + ".csv"
