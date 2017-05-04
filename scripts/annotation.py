@@ -153,7 +153,7 @@ def main():
     credible_snps = create_snps_file(credible_snps, snp_list_file)
     
     
-    # get list of epigenomes
+    # get list of epigenomes 
     if options.epi_type == "list":
         epigenomes = options.epi_names.split(",")
     else:
@@ -172,9 +172,16 @@ def main():
     # tabulate vcf
     table = tabulate_vcf(options.output_file + '.vcf', epigenomes)
 
-    # merge posterior probabilities
+    # merge posterior probabilities and SNPID
     table = pd.merge(table, credible_snps, how = 'left', left_on = 'POS',right_on = 'POS')
-    table = pd.merge(table, snpid_extract, how = 'left', left_on = 'POS',right_on = 'POS')    
+    table = pd.merge(table, snpid_extract, how = 'left', left_on = 'POS',right_on = 'POS')
+    
+    # remove unwanted columns
+    fields_to_remove = ['POS2','CHROM_y']
+    table.drop(fields_to_remove, axis=1, inplace=True)
+    
+    # rename CHROM_x
+    table.rename (columns={'CHROM_x':'CHROM'}, inplace=True)
 
     # write table to file
     table_file = options.output_file + ".csv"
