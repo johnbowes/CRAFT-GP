@@ -27,7 +27,7 @@ def main():
 
         # read summary stats file
         stats_file = options.stats
-        stats = pd.read_table(stats_file, sep=" ")
+        stats = pd.read_table(stats_file, sep="\t")
 
 	# read region file
 	regions_file = options.regions
