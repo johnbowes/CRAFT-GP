@@ -202,9 +202,9 @@ def write_output(output_data,cmoutput, output)
 		#path = "output/regions/supplementary/regions_"+ cM_m + "cm.txt"
 		#path_bound = "output/regions/supplementary/boundaries_"+ cM_m + "cm.txt"
 		#path_bound_red = "output/regions/region_boundaries_"+ cM_m + "cm.txt"
-    path = output + "/supplementary/regions_"+ cM_m + "cm.txt"
-    path_bound = output + "/supplementary/boundaries_"+ cM_m + "cm.txt"
-    path_bound_red = output + "region_boundaries_"+ cM_m + "cm.txt"
+    path = File.join(output,"supplementary","regions_"+ cM_m + "cm.txt")
+    path_bound = File.join(output,"supplementary","boundaries_"+ cM_m + "cm.txt")
+    path_bound_red = File.join(output,"region_boundaries_"+ cM_m + "cm.txt")
 		dirs = [path,path_bound,path_bound_red]
 		dirs.each do |dir|
 			dirname = File.dirname(dir)
@@ -237,7 +237,7 @@ def write_output(output_data,cmoutput, output)
 		o_file.close()
 
 		if !snps_not_range.empty?
-			path = "output/regions/supplementary/snps_not_in_range.txt"
+			path = File.join(output,"supplementary","snps_not_in_range.txt")
 			#path = "outputs/snps_not_in_range.txt"
 			dirname = File.dirname(path)
 			unless File.directory?(dirname)
@@ -260,7 +260,7 @@ def write_output(output_data,cmoutput, output)
 
 	elsif !cmoutput 
 		puts("BP")
-		path_bound_red = "output/regions/red_boundaries_"+ $bp.to_s + "bp.txt"
+		path_bound_red = File.join(output,"red_boundaries_"+ $bp.to_s + "bp.txt")
 		dirname = File.dirname(path_bound_red)
 		unless File.directory?(dirname)
 			FileUtils.mkdir_p(dirname)
