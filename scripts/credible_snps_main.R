@@ -99,20 +99,28 @@ for(i in seq_along(cred)) {
 
 # create summary table
 summary_table <- rbind_all(summ)
-summary_file <- paste(opt$out, "summary_table_", opt$cpp,".txt",sep="")
+summary_file <- file.path(opt$out, paste("summary_table_", opt$cpp,".txt",sep=""))
 write_delim(summary_table, delim = " ", summary_file)
 
 # create credible snp table
 credible_snps <- do.call("rbind",cred)
-credible_file <- paste(opt$out, "credible_snps_", opt$cpp,".txt",sep="")
+credible_file <- file.path(opt$out, paste("credible_snps_", opt$cpp,".txt",sep=""))
 write_delim(credible_snps, delim = " ", credible_file)
 
 # create list of credible SNP rs numbers for VEP input
+<<<<<<< HEAD
 #credible_snp_list <- credible_snps %>%
 #	dplyr::select(SNPID)
 #
 #credible_snp_list_file = paste(opt$out, "credible_snp_list_", opt$cpp,".txt",sep="")
 #write_delim(credible_snp_list, delim = " ", credible_snp_list_file, col_names = FALSE)
+=======
+credible_snp_list <- credible_snps %>%
+	dplyr::select(SNPID)
+
+credible_snp_list_file = file.path(opt$out, paste("credible_snp_list_", opt$cpp,".txt",sep=""))
+write_delim(credible_snp_list, delim = " ", credible_snp_list_file, col_names = FALSE)
+>>>>>>> c27396323a0486fc42d0e749bbb88dded54282e1
 
 # create data for bed file tracks
 cred_region <- summary_table %>%
@@ -131,9 +139,16 @@ writeLines(capture.output(sessionInfo()), "sessionInfo_cred_snps.txt")
 save.image("credible_snps_image.RData")
 
 # create bed file
+<<<<<<< HEAD
 bed_file <- paste(opt$bed, "credible_snps_", opt$cpp,".bed",sep="")
 cat("track name=\"cred\" description=\"Cred interval\" visibility=1", file = bed_file, sep = "\n")
 write_delim(cred_region, bed_file, delim = " ", col_names = FALSE, append = TRUE)
 cat("track name=\"credSNPs\" description=\"Cred SNPs\" visibility=1", file = bed_file, sep = "\n", append = TRUE)
+=======
+bed_file <- file.path(opt$out, paste("credible_snps_", opt$cpp,".bed",sep=""))
+#cat("track name=\"cred\" description=\"Cred interval\" visibility=1", file = bed_file, sep = "\n")
+#write_delim(cred_region, bed_file, delim = " ", col_names = FALSE, append = TRUE)
+cat("track name=\"credSNPs\" description=\"Cred SNPs\" visibility=1", file = bed_file, sep = "\n")
+>>>>>>> c27396323a0486fc42d0e749bbb88dded54282e1
 write_delim(cred_snps, bed_file, delim = " ", col_names = FALSE, append = TRUE)
 
