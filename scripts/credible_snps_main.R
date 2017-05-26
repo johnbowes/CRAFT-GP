@@ -45,11 +45,11 @@ if(interactive())
               bed = "test_results/bed/")
 
 # read regions file
-regions <- read_delim(opt$regions, delim = "\t", col_names = c('index','locus')) %>%
+regions <- read_delim(opt$regions, delim = "\t", col_names = c('index','locus'), col_types=cols(index=col_character())) %>%
 	separate(locus, sep = "[:-]", c('chr','start','end'))
 
 # read summary statistics
-data <- read_delim(opt$stats, delim = " ")
+data <- read_delim(opt$stats, delim = " ", col_types=cols(SNPID=col_character()))
 
 # calculate ABF
 data$BF <- -abf(p=data$PVAL, maf=data$A1_UNAFF, n0=opt$affected, n1=opt$unaffected)
